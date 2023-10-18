@@ -1,0 +1,15 @@
+/*                                                                                                   
+ * Copyright (c) 2023 Jaap Versteegh <j.r.versteegh@gmail.com>                                                 
+ *                                                                                                   
+ * SPDX-License-Identifier: Apache-2.0                                                               
+ */                                                                                                  
+
+&i2c0 {
+  pca9685_kitronic_crb_5693: pca9685@6c {                                                      
+    status = "okay";                                                                    
+    compatible = "nxp,pca9685-pwm";                                                     
+    reg = <0x6c>;                                                                       
+    reset-bus;
+    #pwm-cells = <2>;                                                                   
+  };
+};

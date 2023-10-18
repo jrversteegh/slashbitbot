@@ -1,0 +1,38 @@
+/*                                                                                                   
+ * Copyright (c) 2023 Jaap Versteegh <j.r.versteegh@gmail.com>                                                 
+ *                                                                                                   
+ * SPDX-License-Identifier: Apache-2.0                                                               
+ */                                                                                                  
+
+&i2c1 {
+  status = "okay";
+  clock-frequency = <I2C_BITRATE_FAST>;
+
+  pinctrl-0 = <&i2c1_default>;
+  pinctrl-1 = <&i2c1_sleep>;
+  pinctrl-names = "default", "sleep";
+
+  pca9685_kitronic_crb_5693: pca9685@6c {                                                      
+    status = "okay";                                                                    
+    compatible = "nxp,pca9685-pwm";                                                     
+    reg = <0x6c>;                                                                       
+    #pwm-cells = <2>;                                                                   
+  };
+};                                                                                                   
+
+&pinctrl {
+  i2c1_default: i2c1_default {
+    group1 {
+      psels = <NRF_PSEL(TWIM_SDA, 1, 0)>,
+              <NRF_PSEL(TWIM_SCL, 0, 26)>;
+    };
+  };
+
+  i2c1_sleep: i2c1_sleep {
+    group1 {
+      psels = <NRF_PSEL(TWIM_SDA, 1, 0)>,
+              <NRF_PSEL(TWIM_SCL, 0, 26)>;
+      low-power-enable;
+    };
+  };
+};

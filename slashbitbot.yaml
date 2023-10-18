@@ -1,0 +1,6 @@
+slashbot:
+  name: BB micro:bit SlashBot
+tests:
+  slashbot:
+    platform_allow: bbc_microbit_v2
+    tags: robot

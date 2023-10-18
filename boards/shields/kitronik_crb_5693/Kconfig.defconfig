@@ -1,0 +1,10 @@
+# Copyright (c) 2023 Jaap Versteegh <j.r.versteegh@gmail.com>
+
+if SHIELD_KITRONIK_CRB_5693
+
+config PWM
+        default y
+config PWM_PCA9685 
+        default y
+
+endif
