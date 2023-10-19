@@ -9,7 +9,6 @@
     status = "okay";                                                                    
     compatible = "nxp,pca9685-pwm";                                                     
     reg = <0x6c>;                                                                       
-    reset-bus;
     #pwm-cells = <2>;                                                                   
   };
 };

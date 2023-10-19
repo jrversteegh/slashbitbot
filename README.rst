@@ -5,7 +5,7 @@ BBC micro:bit slashbitbot
 
 Overview
 ********
-Robot code for BBC microbit + kitronik Compact Robotics Board.
+Robot code for BBC microbit v2 + kitronik Compact Robotics Board.
 
 Building
 ********
@@ -13,7 +13,7 @@ Building
 This project drives the robot. It requires Zephyr to build.
 After installing Zephyr, this project can be built as follows:
 
-``west build -b bbc_microbit[_v2]``
+``west build``
 
 Flashed with:
 

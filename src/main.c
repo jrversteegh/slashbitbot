@@ -105,8 +105,16 @@ end:
 
 
 int main(void) {
-  const struct device *const accelerometer = DEVICE_DT_GET_ONE(st_lis2dh);
-  const struct device *const magnetometer = DEVICE_DT_GET_ONE(st_lis2mdl);
+  const struct device *const accelerometer = DEVICE_DT_GET(DT_ALIAS(accel0));
+  const struct device *const magnetometer = DEVICE_DT_GET(DT_ALIAS(magn0));
+
+  // Upon power on this will happen (not sure why). Will be fine after MCU reset
+  if (!device_is_ready(accelerometer) || !device_is_ready(magnetometer)) {
+    printk("Device %s is not ready\n", accelerometer->name);
+    sys_reboot(SYS_REBOOT_COLD);
+    return 1;
+  }
+
   const struct pwm_dt_spec motor0 = PWM_DT_SPEC_GET(DT_NODELABEL(motor0));
   const struct pwm_dt_spec motor1 = PWM_DT_SPEC_GET(DT_NODELABEL(motor1));
 
@@ -116,22 +124,6 @@ int main(void) {
 
   k_sleep(K_SECONDS(4));
 
-  if (!device_is_ready(accelerometer)) {
-    printk("Device %s is not ready\n", accelerometer->name);
-    mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 2000, &sad1, 1);
-    k_sleep(K_SECONDS(2));
-    sys_reboot(SYS_REBOOT_COLD);
-    return 1;
-  }
-
-  if (!device_is_ready(magnetometer)) {
-    printk("Device %s is not ready\n", magnetometer->name);
-    mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 2000, &sad2, 1);
-    k_sleep(K_SECONDS(2));
-    sys_reboot(SYS_REBOOT_COLD);
-    return 1;
-  }
-
   if (read_sensor(accelerometer, SENSOR_CHAN_ACCEL_XYZ) < 0) {
     printk("Couldn't read acceleration");
     mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 2000, &woot, 1);
@@ -140,7 +132,6 @@ int main(void) {
     return 1;
   }
   printk("Acceleration: %f, %f ,%f\n", x, y, z);
-
 
   if (!pwm_is_ready_dt(&motor0)) {
     printk("Error: Motor %s is not ready\n", motor0.dev->name);
@@ -159,9 +150,26 @@ int main(void) {
   }
 
   int pulse = 0;
+  int ret;
+
   while (true) {
-    pwm_set_pulse_dt(&motor0, PWM_USEC(((pulse * 400) % 40000)));
-    pwm_set_pulse_dt(&motor1, PWM_USEC(((pulse * 400) + 20000) % 40000));
+
+    ret = pwm_set_pulse_dt(&motor0, PWM_USEC(((pulse * 400) % 40000)));
+    if (ret != 0) {
+      mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 2000, &sad1, 1);
+      k_sleep(K_SECONDS(2));
+      sys_reboot(SYS_REBOOT_COLD);
+      return 1;
+    }
+
+    ret = pwm_set_pulse_dt(&motor1, PWM_USEC(((pulse * 400) + 20000) % 40000));
+    if (ret != 0) {
+      mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 2000, &sad2, 1);
+      k_sleep(K_SECONDS(2));
+      sys_reboot(SYS_REBOOT_COLD);
+      return 1;
+    }
+
     if (pulse % 2 == 0) {
       mb_display_image(disp, MB_DISPLAY_MODE_SINGLE, 1000, &laugh1, 1);
     }
