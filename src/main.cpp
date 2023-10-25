@@ -14,6 +14,7 @@
 
 #include "display.h"
 #include "errors.h"
+#include "sensors.h"
 #include "motors.h"
 
 static double x = 0.0;
@@ -47,6 +48,9 @@ end:
 
 
 int main(void) {
+  printk("SlashBitBot initializing...\n");
+  initialize_sensors();
+  initialize_motors();
   const struct device *const accelerometer = DEVICE_DT_GET(DT_ALIAS(accel0));
   const struct device *const magnetometer = DEVICE_DT_GET(DT_ALIAS(magn0));
 
@@ -60,19 +64,19 @@ int main(void) {
   show_smile(4);
   k_sleep(K_SECONDS(4));
 
-  if (read_sensor(accelerometer, SENSOR_CHAN_ACCEL_XYZ) < 0) {
-    printk("Couldn't read acceleration");
-    show_woot(2);
-    k_sleep(K_SECONDS(2));
-    sys_reboot(SYS_REBOOT_COLD);
-    return 1;
-  }
-  printk("Acceleration: %f, %f ,%f\n", x, y, z);
-
   int i = 0;
 
+  printk("SlashBitBot running...\n");
+  set_motors(1.0, 1.0);
   while (true) {
-    set_motors(sin(0.07 * i), cos(0.07 * i));
+    if (read_sensor(accelerometer, SENSOR_CHAN_ACCEL_XYZ) < 0) {
+      error(1, "Couldn't read acceleration");
+    }
+    printk("Acceleration: %.4f, %.4f, %.4f\n", x, y, z);
+
+    //set_motors(sin(0.07 * i), cos(0.07 * i));
+    auto counters = get_wheel_counters();
+    printk("Wheel left: %d, right: %d\n", counters.left, counters.right);
 
     if (i % 2 == 0) {
       show_laugh(1, 0);
@@ -84,5 +88,6 @@ int main(void) {
     k_sleep(K_SECONDS(1));
   }
 
+  printk("SlashBitBot done.\n");
   return 0;
 }

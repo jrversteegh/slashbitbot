@@ -1,0 +1,11 @@
+&nfct {
+        status = "disabled";
+};
+
+/ {                                                                                                  
+        zephyr,user {                                                                                
+                left-wheel-gpios = <&edge_connector 9 GPIO_ACTIVE_LOW>;
+                right-wheel-gpios = <&edge_connector 8 GPIO_ACTIVE_LOW>;
+        };                                                                                           
+
+};
