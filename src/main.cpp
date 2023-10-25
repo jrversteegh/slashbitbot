@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <math.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/i2c.h>
-#include <zephyr/sys/reboot.h>
 
 #include "display.h"
 #include "errors.h"
@@ -56,8 +57,6 @@ int main(void) {
     return 1;
   }
 
-
-
   show_smile(4);
   k_sleep(K_SECONDS(4));
 
@@ -70,24 +69,19 @@ int main(void) {
   }
   printk("Acceleration: %f, %f ,%f\n", x, y, z);
 
-
-  int pulse = 0;
-  int ret;
+  int i = 0;
 
   while (true) {
+    set_motors(sin(0.07 * i), cos(0.07 * i));
 
-
-    if (pulse % 2 == 0) {
+    if (i % 2 == 0) {
       show_laugh(1, 0);
     }
     else {
       show_laugh(1, 1);
     }
-    ++pulse;
+    ++i;
     k_sleep(K_SECONDS(1));
-    if (pulse > 100) {
-      sys_reboot(SYS_REBOOT_COLD);
-    }
   }
 
   return 0;

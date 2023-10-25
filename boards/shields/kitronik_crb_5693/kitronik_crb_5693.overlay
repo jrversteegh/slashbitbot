@@ -9,49 +9,49 @@
   servos {
     compatible = "pwm-servos";                                                             
     servo0: servo_0 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 0 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 0 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo1: servo_1 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 1 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 1 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo2: servo_2 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 2 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 2 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo3: servo_3 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 3 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 3 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo4: servo_4 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 4 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 4 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo5: servo_5 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 5 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 5 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo6: servo_6 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 6 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 6 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
 
     servo7: servo_7 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 7 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 7 PWM_MSEC(40)>;
       min-pulse = <PWM_USEC(700)>;
       max-pulse = <PWM_USEC(2500)>;
     };
@@ -61,23 +61,23 @@
     compatible = "pwm-motors";                                                             
 
     motor0: motor_0 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 9 PWM_MSEC(40) PWM_POLARITY_NORMAL>,
-             <&pca9685_kitronic_crb_5693 8 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 9 PWM_MSEC(40)>,
+             <&pca9685_kitronic_crb_5693 8 PWM_MSEC(40)>;
     };
 
     motor1: motor_1 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 11 PWM_MSEC(40) PWM_POLARITY_NORMAL>,
-             <&pca9685_kitronic_crb_5693 10 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 11 PWM_MSEC(40)>,
+             <&pca9685_kitronic_crb_5693 10 PWM_MSEC(40)>;
     };
 
     motor2: motor_2 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 13 PWM_MSEC(40) PWM_POLARITY_NORMAL>,
-             <&pca9685_kitronic_crb_5693 12 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 13 PWM_MSEC(40)>,
+             <&pca9685_kitronic_crb_5693 12 PWM_MSEC(40)>;
     };
 
     motor3: motor_3 {                                                                                    
-      pwms = <&pca9685_kitronic_crb_5693 15 PWM_MSEC(40) PWM_POLARITY_NORMAL>,
-             <&pca9685_kitronic_crb_5693 14 PWM_MSEC(40) PWM_POLARITY_NORMAL>;
+      pwms = <&pca9685_kitronic_crb_5693 15 PWM_MSEC(40)>,
+             <&pca9685_kitronic_crb_5693 14 PWM_MSEC(40)>;
     };
   };
 
