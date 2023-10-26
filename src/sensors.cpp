@@ -39,9 +39,9 @@ Wheel_sensors get_wheel_sensors() {
   return result;
 }
 
-static Vector read_sensor(device const* sensor, sensor_channel channel) {
+static Vector3 read_sensor(device const* sensor, sensor_channel channel) {
   struct sensor_value values[3];
-  Vector result{};
+  Vector3 result{};
 
   auto ret = sensor_sample_fetch(sensor);
   if (ret < 0 && ret != -EBADMSG) {
@@ -61,7 +61,7 @@ static Vector read_sensor(device const* sensor, sensor_channel channel) {
   return result;
 }
 
-Vector get_acceleration() {
+Vector3 get_acceleration() {
     return read_sensor(accelerometer, SENSOR_CHAN_ACCEL_XYZ);
 }
 
