@@ -4,4 +4,7 @@
 void initialize_motors();
 void set_motors(float motor_left, float motor_right);
 
+extern int left_motor_dir;
+extern int right_motor_dir;
+
 #endif
