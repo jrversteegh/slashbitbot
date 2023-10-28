@@ -1,3 +1,4 @@
+#include <type_traits>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
@@ -39,6 +40,24 @@ Wheel_sensors get_wheel_sensors() {
   return result;
 }
 
+struct None {};
+
+template <typename T>
+inline T sensor_value_to(sensor_value const& value) {
+  static_assert(std::is_same_v<T, None>, "Conversion not supported");
+  return 0;
+}
+
+template <>
+inline float sensor_value_to<float>(sensor_value const& value) {
+  return sensor_value_to_float(&value);
+}
+
+template <>
+inline double sensor_value_to<double>(sensor_value const& value) {
+  return sensor_value_to_double(&value);
+}
+
 static Vector3 read_sensor(device const* sensor, sensor_channel channel) {
   struct sensor_value values[3];
   Vector3 result{};
@@ -55,9 +74,9 @@ static Vector3 read_sensor(device const* sensor, sensor_channel channel) {
     return result;
   }
 
-  result.x = sensor_value_to_double(&values[0]);
-  result.y = sensor_value_to_double(&values[1]);
-  result.z = sensor_value_to_double(&values[2]);
+  result.x = -sensor_value_to<decltype(result.x)>(values[2]);
+  result.y = sensor_value_to<decltype(result.y)>(values[0]);
+  result.z = sensor_value_to<decltype(result.z)>(values[1]);
   return result;
 }
 

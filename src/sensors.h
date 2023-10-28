@@ -1,15 +1,19 @@
 #ifndef SLASHBITBOT_SENSORS_H__
 #define SLASHBITBOT_SENSORS_H__
 
+#include "functions.h"
+
 struct Vector3 {
-  float x;
-  float y;
-  float z;
+  Number x;
+  Number y;
+  Number z;
 };
 
 struct Wheel_counters {
   int left;
   int right;
+
+  auto operator<=>(const Wheel_counters&) const = default;
 };
 
 struct Wheel_sensors {

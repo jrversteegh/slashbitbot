@@ -2,6 +2,10 @@
         status = "disabled";
 };
 
+&uicr { 
+        nfct-pins-as-gpios; 
+};
+
 / {                                                                                                  
         zephyr,user {                                                                                
                 left-wheel-gpios = <&edge_connector 9 GPIO_ACTIVE_LOW>;

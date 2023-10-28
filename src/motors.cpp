@@ -27,38 +27,29 @@ void initialize_motors() {
       return;
     }
   }
-  set_motors(0.0, 0.0);
+  set_motors({0.0, 0.0});
 }
 
-void set_motors(float motor_left, float motor_right) {
-  if (motor_left > 1.0)
-    motor_left = 1.0;
-  if (motor_left < -1.0)
-    motor_left = -1.0;
-  if (motor_right > 1.0)
-    motor_right = 1.0;
-  if (motor_right < -1.0)
-    motor_right = -1.0;
-
+void set_motors(Motors_setting const& setting) {
   int ret = 0;
-  if (motor_left > 0.0) {
+  if (setting.left > 0.0) {
     ret |= pwm_set_pulse_dt(&pwms[1], 0);
-    ret |= pwm_set_pulse_dt(&pwms[0], PWM_NSEC(static_cast<int32_t>(motor_left * pwms[0].period)));
+    ret |= pwm_set_pulse_dt(&pwms[0], PWM_NSEC(static_cast<int32_t>(setting.left * pwms[0].period)));
     left_motor_dir = 1;
   }
   else {
     ret |= pwm_set_pulse_dt(&pwms[0], 0);
-    ret |= pwm_set_pulse_dt(&pwms[1], PWM_NSEC(static_cast<int32_t>(-motor_left * pwms[1].period)));
+    ret |= pwm_set_pulse_dt(&pwms[1], PWM_NSEC(static_cast<int32_t>(-setting.left * pwms[1].period)));
     left_motor_dir = -1;
   }
-  if (motor_right > 0.0) {
+  if (setting.right > 0.0) {
     ret |= pwm_set_pulse_dt(&pwms[3], 0);
-    ret |= pwm_set_pulse_dt(&pwms[2], PWM_NSEC(static_cast<int32_t>(motor_right * pwms[2].period)));
+    ret |= pwm_set_pulse_dt(&pwms[2], PWM_NSEC(static_cast<int32_t>(setting.right * pwms[2].period)));
     right_motor_dir = 1;
   }
   else {
     ret |= pwm_set_pulse_dt(&pwms[2], 0);
-    ret |= pwm_set_pulse_dt(&pwms[3], PWM_NSEC(static_cast<int32_t>(-motor_right * pwms[3].period)));
+    ret |= pwm_set_pulse_dt(&pwms[3], PWM_NSEC(static_cast<int32_t>(-setting.right * pwms[3].period)));
     right_motor_dir = -1;
   }
   if (ret != 0) {
