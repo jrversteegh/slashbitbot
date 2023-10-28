@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "functions.h"
+#include "geometry.h"
 
 struct Vector {
   Number r{};
@@ -17,6 +18,10 @@ struct Path {
 };
 
 struct RelativeVector: public Vector {
+  void flip_sign() {
+    r = -r;
+    heading = angle_mod_signed(heading + pi);
+  }
 };
 
 struct RelativePath: public Path {
@@ -25,15 +30,21 @@ struct RelativePath: public Path {
 struct Motion {
   Number speed{};
   Number rot{};
-  void update(Vector v, Number time_delta, Number rate) {
-    speed = v.r * rate / time_delta + speed * (1 - rate);
-    rot = v.heading * rate / time_delta + rot * (1 - rate);
+  void update(Number const& speed, Number const& rot, Number rate) {
+    update(Motion{speed, rot}, rate);
+  }
+  void update(Motion const& motion, Number rate) {
+    speed = motion.speed * rate + speed * (1 - rate);
+    rot = motion.rot * rate + rot * (1 - rate);
   }
 };
 
-struct Locor {
+struct Location {
   Number x{};
   Number y{};
+};
+
+struct Locor: public Location {
   Number heading{};
   Locor& operator+=(Vector const& v) {
     heading = v.heading;
@@ -47,14 +58,26 @@ struct Locor {
     y += std::sin(heading) * rv.r;
     return *this;
   }
+  Location& location() {
+    return *this;
+  }
 };
 
-inline Vector operator-(Locor const& locor1, Locor const& locor2) {
-  auto dx = locor1.x - locor2.x;
-  auto dy = locor1.y - locor2.y;
+inline Vector operator-(Location const& loc1, Location const& loc2) {
+  auto dx = loc1.x - loc2.x;
+  auto dy = loc1.y - loc2.y;
   return Vector{
     std::sqrt(dx * dx + dy * dy),
-    std::atan2(dy, dx)
+    angle_mod(std::atan2(dy, dx))
+  };
+}
+
+inline RelativeVector operator-(Locor const& locor1, Locor const& locor2) {
+  auto dx = locor1.x - locor2.x;
+  auto dy = locor1.y - locor2.y;
+  return RelativeVector{
+    std::sqrt(dx * dx + dy * dy),
+    angle_diff(std::atan2(dy, dx), locor2.heading)
   };
 }
 

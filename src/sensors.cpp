@@ -7,6 +7,9 @@
 #include "errors.h"
 #include "sensors.h"
 #include "motors.h"
+#include "geometry.h"
+
+static constexpr Number wheel_speed_update_factor = 0.25;
 
 static gpio_dt_spec const left_wheel_gpio = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), left_wheel_gpios);
 static  gpio_dt_spec const right_wheel_gpio = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), right_wheel_gpios);
@@ -14,23 +17,46 @@ static device const* const accelerometer = DEVICE_DT_GET(DT_ALIAS(accel0));
 // Compass is useless because of the nearby motors, but initialize anyway
 static device const* const magnetometer = DEVICE_DT_GET(DT_ALIAS(magn0));
 
-static Wheel_counters wheel_counters = {0, 0};
+static int left_wheel_counter = 0;
+static int right_wheel_counter = 0;
+static Number left_wheel_speed = 0;
+static Number right_wheel_speed = 0;
 
 static struct gpio_callback left_wheel_callback;
 static struct gpio_callback right_wheel_callback;
 
 static void left_wheel_irq(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-  wheel_counters.left += left_motor_dir;
+  static int64_t last_time = 0;
+  auto delta = k_uptime_get() - last_time;
+  // Debounce by requiring more than 2ms between counts
+  if (delta > 2) {
+    left_wheel_counter += left_motor_dir;
+    left_wheel_speed = (1 - wheel_speed_update_factor) * left_wheel_speed
+                     + wheel_speed_update_factor * wheel_step * left_motor_dir * 1000.0 / delta;
+    last_time += delta;
+  }
 }
 
 static void right_wheel_irq(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-  wheel_counters.right += right_motor_dir;
+  static int64_t last_time = 0;
+  auto delta = k_uptime_get() - last_time;
+  // Debounce by requiring more than 2ms between counts
+  if (delta > 2) {
+    right_wheel_counter += right_motor_dir;
+    right_wheel_speed = (1 - wheel_speed_update_factor) * right_wheel_speed
+                      + wheel_speed_update_factor * wheel_step * right_motor_dir * 1000.0 / delta;
+    last_time += delta;
+  }
 }
 
 Wheel_counters get_wheel_counters() {
-  return wheel_counters;
+  return Wheel_counters({left_wheel_counter, right_wheel_counter});
+}
+
+Wheel_speeds get_wheel_speeds() {
+  return Wheel_speeds({left_wheel_speed, right_wheel_speed});
 }
 
 Wheel_sensors get_wheel_sensors() {

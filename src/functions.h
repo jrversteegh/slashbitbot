@@ -1,9 +1,12 @@
 #ifndef SLASHBITBOT_FUNCTIONS_H__
 #define SLASHBITBOT_FUNCTIONS_H__
 
+#include <numbers>
 #include <cmath>
 
 using Number = float;
+
+static constexpr Number pi = std::numbers::pi_v<Number>;
 
 inline Number angle_mod(Number const angle) {
   Number result = std::fmod(angle, 360.0);

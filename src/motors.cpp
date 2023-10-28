@@ -27,7 +27,7 @@ void initialize_motors() {
       return;
     }
   }
-  set_motors({0.0, 0.0});
+  set_motors(Motors_setting{0.0, 0.0});
 }
 
 void set_motors(Motors_setting const& setting) {
@@ -55,4 +55,21 @@ void set_motors(Motors_setting const& setting) {
   if (ret != 0) {
     error(2, "Failed to set motor pwm");
   }
+}
+
+Number speed_to_setting_left(Number const& speed) {
+  // TODO
+  return speed;
+}
+
+Number speed_to_setting_right(Number const& speed) {
+  // TODO
+  return speed;
+}
+
+void set_motors(Motor_speeds const& speeds) {
+  set_motors(Motors_setting{
+      speed_to_setting_left(speeds.left),
+      speed_to_setting_right(speeds.right)
+  });
 }
