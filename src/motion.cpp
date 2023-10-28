@@ -57,7 +57,7 @@ void update_locor_motion() {
 void control_motors(Motor_speeds const& speeds) {
   if (speeds != motor_speeds) {
     set_motors(speeds);
-    motors_speeds = setting;
+    motor_speeds = speeds;
   }
 }
 
