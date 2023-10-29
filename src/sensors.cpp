@@ -25,29 +25,30 @@ static Number right_wheel_speed = 0;
 static struct gpio_callback left_wheel_callback;
 static struct gpio_callback right_wheel_callback;
 
+static int64_t last_left_time = 0;
+static int64_t last_right_time = 0;
+
 static void left_wheel_irq(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-  static int64_t last_time = 0;
-  auto delta = k_uptime_get() - last_time;
-  // Debounce by requiring more than 2ms between counts
-  if (delta > 2) {
+  auto delta = k_uptime_get() - last_left_time;
+  // Debounce by requiring more than 10ms between counts
+  if (delta > 10) {
     left_wheel_counter += left_motor_dir;
     left_wheel_speed = (1 - wheel_speed_update_factor) * left_wheel_speed
                      + wheel_speed_update_factor * wheel_step * left_motor_dir * 1000.0 / delta;
-    last_time += delta;
+    last_left_time += delta;
   }
 }
 
 static void right_wheel_irq(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-  static int64_t last_time = 0;
-  auto delta = k_uptime_get() - last_time;
-  // Debounce by requiring more than 2ms between counts
-  if (delta > 2) {
+  auto delta = k_uptime_get() - last_right_time;
+  // Debounce by requiring more than 10ms between counts
+  if (delta > 10) {
     right_wheel_counter += right_motor_dir;
     right_wheel_speed = (1 - wheel_speed_update_factor) * right_wheel_speed
                       + wheel_speed_update_factor * wheel_step * right_motor_dir * 1000.0 / delta;
-    last_time += delta;
+    last_right_time += delta;
   }
 }
 
@@ -56,6 +57,13 @@ Wheel_counters get_wheel_counters() {
 }
 
 Wheel_speeds get_wheel_speeds() {
+  auto now = k_uptime_get();
+  if (now - last_left_time > 900) {
+    left_wheel_speed = 0.0;
+  }
+  if (now - last_right_time > 900) {
+    right_wheel_speed = 0.0;
+  }
   return Wheel_speeds({left_wheel_speed, right_wheel_speed});
 }
 

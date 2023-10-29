@@ -15,6 +15,7 @@ struct Motor_speeds: public Motors_setting {
 void initialize_motors();
 void set_motors(Motors_setting const& setting);
 void set_motors(Motor_speeds const& speeds);
+void calibrate_motors();
 
 extern int left_motor_dir;
 extern int right_motor_dir;

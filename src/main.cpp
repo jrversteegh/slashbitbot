@@ -12,6 +12,7 @@
 
 #include "display.h"
 #include "errors.h"
+#include "storage.h"
 #include "sensors.h"
 #include "motors.h"
 #include "motion.h"
@@ -35,10 +36,48 @@ void motor_non_linearity_test() {
   }
 }
 
+static const struct gpio_dt_spec sw0_gpio = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
+static const struct gpio_dt_spec sw1_gpio = GPIO_DT_SPEC_GET(DT_ALIAS(sw1), gpios);
+
+static void button_pressed(const device *dev, gpio_callback *cb, uint32_t pins) {
+  if (pins & BIT(sw0_gpio.pin)) {
+    printk("A pressed\n");
+  } else {
+    printk("B pressed\n");
+  }
+}
+
+static void initialize_buttons() {
+  static struct gpio_callback button_cb_data;
+
+  if (!gpio_is_ready_dt(&sw0_gpio) || !gpio_is_ready_dt(&sw1_gpio)) {
+    error(0, "Button io not ready.");
+    return;
+  }
+
+  gpio_pin_configure_dt(&sw0_gpio, GPIO_INPUT);
+  gpio_pin_configure_dt(&sw1_gpio, GPIO_INPUT);
+
+  gpio_pin_interrupt_configure_dt(&sw0_gpio, GPIO_INT_EDGE_TO_ACTIVE);
+  gpio_pin_interrupt_configure_dt(&sw1_gpio, GPIO_INT_EDGE_TO_ACTIVE);
+
+  gpio_init_callback(&button_cb_data, button_pressed,
+      BIT(sw0_gpio.pin) | BIT(sw1_gpio.pin));
+
+  gpio_add_callback(sw0_gpio.port, &button_cb_data);
+}
+
 int main(void) {
   printk("SlashBitBot initializing...\n");
+  initialize_buttons();
+  initialize_storage();
   initialize_sensors();
   initialize_motors();
+
+  // When button A pressed at startup: calibrate motors
+  if (gpio_pin_get_dt(&sw0_gpio)) {
+    calibrate_motors();
+  }
   //initialize_motion();
 
   show_smile(4);
