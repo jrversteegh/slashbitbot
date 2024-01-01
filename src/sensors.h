@@ -2,6 +2,7 @@
 #define SLASHBITBOT_SENSORS_H__
 
 #include "functions.h"
+#include "geometry.h"
 
 struct Vector3 {
   Number x;
@@ -40,6 +41,12 @@ struct Wheel_sensors {
 struct Wheel_speeds {
   Number left;
   Number right;
+  Number get_speed() {
+    return 0.5 * (left + right);
+  }
+  Number get_rot() {
+    return (left - right) / width;
+  }
 };
 
 void initialize_sensors();
@@ -47,5 +54,6 @@ Wheel_counters get_wheel_counters();
 Wheel_sensors get_wheel_sensors();
 Wheel_speeds get_wheel_speeds();
 Vector3 get_acceleration();
+Vector3 get_magfield();
 
 #endif

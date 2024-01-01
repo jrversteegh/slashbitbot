@@ -47,6 +47,17 @@ static void button_pressed(const device *dev, gpio_callback *cb, uint32_t pins) 
   }
 }
 
+void print_sensors() {
+  auto acceleration = get_acceleration();
+  printk("Acceleration: %.4f, %.4f, %.4f\n", acceleration.x, acceleration.y, acceleration.z);
+
+  auto mag_field = get_magfield();
+  printk("Mag field: %.4f, %.4f, %.4f\n", mag_field.x, mag_field.y, mag_field.z);
+
+  auto counters = get_wheel_counters();
+  printk("Wheel left: %d, right: %d\n", counters.left, counters.right);
+}
+
 static void initialize_buttons() {
   static struct gpio_callback button_cb_data;
 
@@ -78,7 +89,9 @@ int main(void) {
   if (gpio_pin_get_dt(&sw0_gpio)) {
     calibrate_motors();
   }
-  //initialize_motion();
+
+  // Start motion control
+  initialize_motion();
 
   show_smile(4);
   k_sleep(K_SECONDS(4));
@@ -87,11 +100,9 @@ int main(void) {
   //motor_non_linearity_test();
   int i = 0;
   while (true) {
-    auto acceleration = get_acceleration();
-    printk("Acceleration: %.4f, %.4f, %.4f\n", acceleration.x, acceleration.y, acceleration.z);
-
-    auto counters = get_wheel_counters();
-    printk("Wheel left: %d, right: %d\n", counters.left, counters.right);
+    if (gpio_pin_get_dt(&sw1_gpio)) {
+      print_sensors();
+    }
 
     if (i % 2 == 0) {
       show_laugh(1, 0);

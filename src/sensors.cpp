@@ -118,6 +118,10 @@ Vector3 get_acceleration() {
     return read_sensor(accelerometer, SENSOR_CHAN_ACCEL_XYZ);
 }
 
+Vector3 get_magfield() {
+    return read_sensor(magnetometer, SENSOR_CHAN_MAGN_XYZ);
+}
+
 void initialize_sensors() {
   // Upon power on this will happen (not sure why). Will be fine after MCU reset
   if (!device_is_ready(accelerometer)) {

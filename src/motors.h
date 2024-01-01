@@ -2,6 +2,7 @@
 #define SLASHBITBOT_MOTORS_H__
 
 #include "functions.h"
+#include "geometry.h"
 
 struct Motors_setting {
   Number left;
@@ -10,6 +11,12 @@ struct Motors_setting {
 };
 
 struct Motor_speeds: public Motors_setting {
+  Number get_speed() {
+    return 0.5 * (left + right);
+  }
+  Number get_rot() {
+    return (left - right) / width;
+  }
 };
 
 void initialize_motors();

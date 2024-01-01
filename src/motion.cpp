@@ -46,8 +46,8 @@ void update_locor_motion() {
     actual_locor += motion_step;
     auto wheel_speeds = get_wheel_speeds();
     motion.update(
-        0.5 * (wheel_speeds.left + wheel_speeds.right),
-        (wheel_speeds.left - wheel_speeds.right) / width,
+        wheel_speeds.get_speed(),
+        wheel_speeds.get_rot(),
         motion_update_rate
     );
     last_wheel_counters = wheel_counters;
@@ -77,7 +77,7 @@ void control_motion(void*, void*, void*) {
       // Fall detection...
       if (std::fabs(acceleration.x) > Number(6.0)) {
         // Stop motors and do nothing when tipped over
-        set_motors(Motors_setting{0.0, 0.0});
+        control_motors({0.0, 0.0});
       }
       else {
         RelativeVector vector = target_locor - actual_locor;
@@ -85,6 +85,13 @@ void control_motion(void*, void*, void*) {
         if (std::fabs(vector.heading) > pi / 2 && vector.r < max_backup_distance) {
           vector.flip_sign();
         }
+        auto wheel_speeds = get_wheel_speeds();
+        // Get a speed estimate
+        Number speed = 0.333 * wheel_speeds.get_speed() + 0.333 * motor_speeds.get_speed() + 0.333 * motion.get_speed();
+        Number rot = 0.333 * wheel_speeds.get_rot() + 0.333 * motor_speeds.get_rot() + 0.333 * motion.get_rot();
+        Number desired_speed = std::copysign(std::min(std::sqrt(std::abs(vector.r), 0.3), vector.r);
+        Number desired_rot = std::copysign(std::min(std::sqrt(std::abs(vector.heading), 0.3), vector.heading);
+        desired_speed += -0.5 * acceleration.x;
       }
     }
     k_msleep(clock_step);
