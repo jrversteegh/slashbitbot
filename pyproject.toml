@@ -22,7 +22,7 @@ keywords = [
 
 
 [tool.poetry.dependencies]
-# python <3.12 to remain compatible with scipy requirements
+# python <3.13 to remain compatible with scipy requirements
 python = ">=3.10, <3.13"
 pygame = "^2.5.2"
 
